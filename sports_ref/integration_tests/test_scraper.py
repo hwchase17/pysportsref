@@ -3,7 +3,7 @@ import unittest
 import requests
 from bs4 import BeautifulSoup
 
-from sports_ref_scraper.parsing import extract_table, find_table
+from ..parsing import extract_table, find_table
 
 
 class TestAsExpected(unittest.TestCase):

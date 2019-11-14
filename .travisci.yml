@@ -16,6 +16,6 @@ matrix:
   - name: "Python 3.6 unit tests"
     python: "3.6"
     script:
-      - pytest sports_ref_scraper/unit_tests
+      - pytest sports_ref/unit_tests
 after_success:
   - coveralls
