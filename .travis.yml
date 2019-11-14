@@ -5,17 +5,15 @@ dist: xenial
 install:
   - pip install --upgrade pip
   - pip install --upgrade setuptools pipenv
-  - pip install -r dev-requirements.txt
+  - pip install -r requirements.txt
 
 matrix:
   include:
   - name: "Lint and static analysis"
     python: "3.6"
-    script:
-      - make lint
+    script: make lint
   - name: "Python 3.6 unit tests"
     python: "3.6"
-    script:
-      - pytest sports_ref/unit_tests
+    script: pytest sports_ref/unit_tests
 after_success:
   - coveralls

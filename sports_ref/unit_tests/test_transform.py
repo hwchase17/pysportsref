@@ -3,10 +3,10 @@ import unittest
 import numpy as np
 import pandas as pd
 
-from ..data import filter_df, merge_with_prev_year
+from ..transform import filter_df, merge_with_prev_year
 
 
-class TestData(unittest.TestCase):
+class TestTransform(unittest.TestCase):
 
     def test_filter_df(self):
         mock_df = pd.DataFrame(

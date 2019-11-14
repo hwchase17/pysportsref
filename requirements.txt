@@ -2,4 +2,4 @@
 pytest
 pylint
 pydocstyle
-lxml
+yapf
