@@ -1,6 +1,11 @@
 import numpy as np
 import pandas as pd
-from bs4 import BeautifulSoup, Comment
+from bs4 import BeautifulSoup
+
+
+def _clean_soup(soup):
+    """Clean up html to get rid of tricky comments."""
+    return BeautifulSoup(str(soup).replace('<!--', '').replace('-->', ''))
 
 
 def get_urls(row):
@@ -11,15 +16,8 @@ def get_urls(row):
 
 def list_tables(soup):
     """List tables present in BSoup object that we know how to fetch."""
-    table_names = [t.attrs['id'] for t in soup.findAll('table')]
-    comments = soup.findAll(text=lambda text: isinstance(text, Comment))
-    for comment in comments:
-        if '<table' in comment:
-            tables = BeautifulSoup(comment, "lxml").findAll('table')
-            for table in tables:
-                if 'id' in table.attrs:
-                    table_names.append(table.attrs['id'])
-    return table_names
+    soup = _clean_soup(soup)
+    return [t.attrs['id'] for t in soup.findAll('table') if 'id' in t.attrs]
 
 
 def extract_table(table_str, header_row=0, start_of_rows=1, get_url=False):
@@ -40,10 +38,9 @@ def extract_table(table_str, header_row=0, start_of_rows=1, get_url=False):
 
 def find_table(soup, table_name):
     """Find html for table, even if in a comment."""
+    soup = _clean_soup(soup)
     tables = soup.findAll('table', {"id": table_name})
     if tables:
         return tables[0]
-    comments = soup.findAll(text=lambda text: isinstance(text, Comment))
-    table_comment = next(c for c in comments if 'id="{}"'.format(table_name) in c)
-    table_soup = BeautifulSoup(table_comment, "lxml")
-    return table_soup.findAll('table', {"id": table_name})[0]
+    else:
+        raise ValueError('table {} not found'.format(table_name))
