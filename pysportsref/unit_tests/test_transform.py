@@ -3,12 +3,12 @@ import unittest
 import numpy as np
 import pandas as pd
 
-from ..transform import filter_df, merge_with_prev_year
+from ..transform import get_player_totals, merge_with_prev_year
 
 
 class TestTransform(unittest.TestCase):
 
-    def test_filter_df(self):
+    def test_get_player_totals(self):
         mock_df = pd.DataFrame(
             [
                 ['harry', 2018, 'kensho', 1],
@@ -31,11 +31,11 @@ class TestTransform(unittest.TestCase):
             columns=['name', 'year', 'team_id', 'var1']
         )
 
-        output_df = filter_df(mock_df, player_col='name')
+        output_df = get_player_totals(mock_df, player_col='name')
         pd.testing.assert_frame_equal(expected_df, output_df)
 
         with self.assertRaises(ValueError):
-            filter_df(mock_df)
+            get_player_totals(mock_df)
 
         # Test with no values of 'TOT'
         mock_df = pd.DataFrame(
@@ -49,7 +49,7 @@ class TestTransform(unittest.TestCase):
                 ['harry', 2018, 'kensho', 1],
             ], columns=['name', 'year', 'team_id', 'var1']
         )
-        output_df = filter_df(mock_df, player_col='name')
+        output_df = get_player_totals(mock_df, player_col='name')
         pd.testing.assert_frame_equal(expected_df, output_df)
 
     def test_merge_with_prev_year(self):

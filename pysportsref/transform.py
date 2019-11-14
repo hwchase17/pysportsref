@@ -6,7 +6,7 @@ def _get_id(df, player_col, year_col):
     return df[player_col] + '___' + df[year_col].astype(str)
 
 
-def filter_df(df, team_col='team_id', player_col='player_url', year_col='year'):
+def get_player_totals(df, team_col='team_id', player_col='player_url', year_col='year'):
     """If a player is present multiple times for the same year, get their TOT stats."""
     missing_cols = {team_col, player_col, year_col}.difference(df.columns)
     if missing_cols:

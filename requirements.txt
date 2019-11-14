@@ -4,3 +4,5 @@ pylint
 pydocstyle
 yapf
 matplotlib
+ipdb
+jupyter

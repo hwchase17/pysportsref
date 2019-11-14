@@ -4,7 +4,7 @@ import unittest
 import pandas as pd
 from bs4 import BeautifulSoup
 
-from ..parsing import extract_table, find_table, list_tables
+from ..parsing import get_table_from_soup, get_table_soup, list_tables
 
 data_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
 
@@ -21,29 +21,38 @@ class TestParsing(unittest.TestCase):
         with open(os.path.join(data_path, 'mock_table_in_comments.txt')) as f:
             cls.expected_comment_tag = BeautifulSoup(f.read(), "lxml").find('table')
 
-    def test_get_table(self):
+    def test_get_table_soup(self):
         # Test with regular table
-        table_tag = find_table(self.soup, 'confs_standings_E')
+        table_tag = get_table_soup(self.soup, 'confs_standings_E')
         self.assertEqual(self.expected_base_tag, table_tag)
 
         # Test with table in comments
-        table_tag = find_table(self.soup, 'misc_stats')
+        table_tag = get_table_soup(self.soup, 'misc_stats')
         self.assertEqual(self.expected_comment_tag, table_tag)
 
-    def test_extract_table(self):
+    def test_get_table_from_soup(self):
         # Test with normal table
-        table_data = extract_table(self.expected_base_tag)
-        expected_df = pd.read_csv(os.path.join(data_path, 'mock_data.csv'), dtype=str)
+        table_data = get_table_from_soup(self.expected_base_tag)
+        expected_df = pd.read_csv(os.path.join(data_path, 'mock_data.csv'))
         pd.testing.assert_frame_equal(expected_df.drop('team_name_url', axis=1), table_data)
 
         # Test getting urls
-        table_data = extract_table(self.expected_base_tag, get_url=True)
+        table_data = get_table_from_soup(self.expected_base_tag, get_url=True)
         pd.testing.assert_frame_equal(expected_df, table_data)
 
         # Test with headers on second row
-        expected_df = pd.read_csv(os.path.join(data_path, 'mock_data_multiheader.csv'), dtype=str)
-        expected_df = expected_df.fillna('')
-        table_data = extract_table(self.expected_comment_tag, header_row=1, start_of_rows=2)
+        expected_df = pd.read_csv(
+            os.path.join(data_path, 'mock_data_multiheader.csv'), dtype={'ranker': float}
+        )
+        expected_df['arena_name'] = expected_df['arena_name'].fillna('')
+        table_data = get_table_from_soup(self.expected_comment_tag, include_tfoot=True)
+        pd.testing.assert_frame_equal(expected_df, table_data)
+
+        # Test without tfoot
+        table_data = get_table_from_soup(self.expected_comment_tag)
+        expected_df = expected_df.iloc[:-1]
+        for col in ['wins', 'losses', 'ranker']:
+            expected_df[col] = expected_df[col].astype(int)
         pd.testing.assert_frame_equal(expected_df, table_data)
 
     def test_list_tables(self):

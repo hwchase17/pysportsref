@@ -3,7 +3,7 @@ import unittest
 import requests
 from bs4 import BeautifulSoup
 
-from ..parsing import extract_table, find_table
+from ..parsing import get_table_from_soup, get_table_soup
 
 
 class TestAsExpected(unittest.TestCase):
@@ -14,6 +14,6 @@ class TestAsExpected(unittest.TestCase):
         url = "https://www.basketball-reference.com/leagues/NBA_2019_advanced.html"
         r = requests.get(url)
         soup = BeautifulSoup(r.content)
-        table_str = find_table(soup, 'advanced_stats')
-        table_data = extract_table(table_str, header_row=0, start_of_rows=1)
+        table_str = get_table_soup(soup, 'advanced_stats')
+        table_data = get_table_from_soup(table_str)
         self.assertEqual((734, 29), table_data.shape)

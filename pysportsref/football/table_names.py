@@ -1,0 +1,2 @@
+PASSING_TABLE_NAME = 'passing'
+RUSHING_TABLE_NAME = 'rushing'
