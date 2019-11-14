@@ -33,7 +33,7 @@ class TestParsing(unittest.TestCase):
     def test_get_table_from_soup(self):
         # Test with normal table
         table_data = get_table_from_soup(self.expected_base_tag)
-        expected_df = pd.read_csv(os.path.join(data_path, 'mock_data.csv'), dtype=str)
+        expected_df = pd.read_csv(os.path.join(data_path, 'mock_data.csv'))
         pd.testing.assert_frame_equal(expected_df.drop('team_name_url', axis=1), table_data)
 
         # Test getting urls
@@ -41,14 +41,19 @@ class TestParsing(unittest.TestCase):
         pd.testing.assert_frame_equal(expected_df, table_data)
 
         # Test with headers on second row
-        expected_df = pd.read_csv(os.path.join(data_path, 'mock_data_multiheader.csv'), dtype=str)
-        expected_df = expected_df.fillna('')
+        expected_df = pd.read_csv(
+            os.path.join(data_path, 'mock_data_multiheader.csv'), dtype={'ranker': float}
+        )
+        expected_df['arena_name'] = expected_df['arena_name'].fillna('')
         table_data = get_table_from_soup(self.expected_comment_tag, include_tfoot=True)
         pd.testing.assert_frame_equal(expected_df, table_data)
 
         # Test without tfoot
         table_data = get_table_from_soup(self.expected_comment_tag)
-        pd.testing.assert_frame_equal(expected_df.iloc[:-1], table_data)
+        expected_df = expected_df.iloc[:-1]
+        for col in ['wins', 'losses', 'ranker']:
+            expected_df[col] = expected_df[col].astype(int)
+        pd.testing.assert_frame_equal(expected_df, table_data)
 
     def test_list_tables(self):
         expected_result = [
