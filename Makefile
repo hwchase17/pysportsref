@@ -1,10 +1,10 @@
 ## Lint using pylint
 lint:
-	yapf --recursive --diff sports_ref
+	yapf --recursive --diff pysportsref
 	pydocstyle
-	isort -rc --diff sports_ref
+	isort -rc --diff pysportsref
 
 ## Format using yapf
 format:
-	yapf --recursive -i sports_ref
-	isort -rc sports_ref
+	yapf --recursive -i pysportsref
+	isort -rc pysportsref
