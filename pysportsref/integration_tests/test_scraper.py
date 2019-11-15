@@ -16,4 +16,4 @@ class TestAsExpected(unittest.TestCase):
         soup = BeautifulSoup(r.content)
         table_str = get_table_soup(soup, 'advanced_stats')
         table_data = get_table_from_soup(table_str)
-        self.assertEqual((734, 29), table_data.shape)
+        self.assertEqual((530, 29), table_data.shape)
